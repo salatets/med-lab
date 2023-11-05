@@ -1,0 +1,53 @@
+name: qt workflow
+run-name: ${{ github.actor }} is learning qt with cmake
+on: 
+  release:
+    types: [created,edited]
+
+env:
+  QT_VER: 6.6.0
+  QT_ARCH: win64_msvc2019_64
+
+jobs:
+  qt-build:
+    uses: ./.github/workflows/qt-build.yml
+    with: # workaround of bug with env
+      qt-version: 6.6.0
+      qt-arch: win64_msvc2019_64
+  qt-deploy:
+    runs-on: windows-latest
+    needs: qt-build
+    steps:
+      - name: Install Qt
+        uses: jurplel/install-qt-action@v3
+        with: 
+          version: ${{ env.QT_VER }}
+          arch: ${{ env.QT_ARCH }}
+          cache: true
+      - name: Download Build
+        uses: actions/download-artifact@v3
+        with:
+          name: release-build
+          path: build
+      - name: Remove all trash
+        run: |
+          new-item -path "deploy" -type directory
+          new-item -path "deploy\components" -type directory
+          move-item -path build\components\componentsplugin.dll,build\components\qmldir -destination deploy\components
+          move-item -path build\components.dll,build\lab.exe -destination deploy
+      - name: Deploy libs
+        run:  |
+          windeployqt --qmldir deploy\components --release --no-translations --no-system-d3d-compiler -no-opengl-sw deploy\lab.exe
+      - name: Archive Release
+        uses: thedoctor0/zip-release@0.7.5
+        with:
+          type: 'zip'
+          filename: 'release.zip'
+          path: deploy/
+      - name: Upload to release
+        uses: Shopify/upload-to-release@v1.0.1
+        with:
+          name: release.zip
+          path: release.zip
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          content-type: application/zip

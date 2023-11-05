@@ -1,0 +1,30 @@
+name: 'qt build'
+description: 'build qt cmake'
+inputs:
+  qt-version:
+    required: true
+  qt-arch:
+    required: true
+  cxx-compiler:
+    required: true
+  c-compiler:
+    required: true
+  build-dir: 
+    required: true
+    default: ${{ runner.workspace }}/build 
+runs:
+  using: "composite"
+  steps:
+    - uses: jurplel/install-qt-action@v3
+      with:
+        version: ${{ inputs.qt-version }}
+        arch: ${{ inputs.qt-arch }}
+        cache: true
+    - uses: threeal/cmake-action@v1.3.0
+      with:
+        generator: Ninja
+        cxx-compiler: ${{ inputs.cxx-compiler }}
+        c-compiler: ${{ inputs.c-compiler }}
+        build-dir: ${{ inputs.build-dir }} 
+        options: CMAKE_BUILD_TYPE=Release
+        run-build: true
