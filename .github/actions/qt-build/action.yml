@@ -1,5 +1,5 @@
-name: 'qt build'
-description: 'build qt cmake'
+name: 'cmake qt build'
+description: 'Build qt project with cmake'
 inputs:
   qt-version:
     required: true

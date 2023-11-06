@@ -1,5 +1,5 @@
-name: qt workflow
-run-name: ${{ github.actor }} is learning qt with cmake
+name: Publish windows binaries
+run-name: ${{ github.actor }} is created/modify release
 on: 
   release:
     types: [created,edited]
@@ -9,14 +9,14 @@ env:
   QT_ARCH: win64_msvc2019_64
 
 jobs:
-  qt-build:
-    uses: ./.github/workflows/qt-build.yml
+  build:
+    uses: ./.github/workflows/win-build.yml
     with: # workaround of bug with env
       qt-version: 6.6.0
       qt-arch: win64_msvc2019_64
-  qt-deploy:
+  release:
     runs-on: windows-latest
-    needs: qt-build
+    needs: build
     steps:
       - name: Install Qt
         uses: jurplel/install-qt-action@v3
@@ -27,25 +27,25 @@ jobs:
       - name: Download Build
         uses: actions/download-artifact@v3
         with:
-          name: release-build
+          name: win-build
           path: build
-      - name: Remove all trash
+      - name: Extract binaries from build
         run: |
           new-item -path "deploy" -type directory
           move-item -path build\lab.exe -destination deploy
       - name: Deploy libs
         run:  |
           windeployqt --qmldir build --release --no-translations --no-system-d3d-compiler -no-opengl-sw deploy\lab.exe
-      - name: Archive Release
+      - name: Archive release
         uses: thedoctor0/zip-release@0.7.5
         with:
           type: 'zip'
-          filename: 'release.zip'
+          filename: 'win-release.zip'
           path: deploy/
-      - name: Upload to release
+      - name: Upload release
         uses: Shopify/upload-to-release@v1.0.1
         with:
-          name: release.zip
-          path: release.zip
+          name: win-release.zip
+          path: win-release.zip
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           content-type: application/zip

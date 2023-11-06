@@ -1,4 +1,4 @@
-name: Windows qt build
+name: Build on Windows
 
 on:
   workflow_call:
@@ -12,12 +12,13 @@ on:
   push:
 
 jobs:
-  qt-build:
+  build:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
       - uses: ilammy/msvc-dev-cmd@v1.12.1
-      - uses: ./.github/actions/qt-build
+      - name: Build
+        uses: ./.github/actions/qt-build
         with:
           qt-version: ${{ inputs.qt-version == '' && inputs.qt-version || '6.6.0' }}
           qt-arch: ${{ inputs.qt-arch == '' && inputs.qt-arch || 'win64_msvc2019_64' }}
@@ -27,5 +28,5 @@ jobs:
       - name: Upload Build
         uses: actions/upload-artifact@v3
         with:
-          name: release-build
+          name: win-build
           path: ${{ runner.workspace }}/build
