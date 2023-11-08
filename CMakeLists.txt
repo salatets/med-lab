@@ -24,7 +24,7 @@ qt6_add_qml_module(lab
     SOURCES src/GoogleClient.hpp
             src/PathGenerator.hpp
             src/Stubs.hpp
-            src/httpclient.cc src/httpclient.h)
+            src/HttpClient.cc src/HttpClient.h)
 
 target_include_directories(lab PRIVATE ${CMAKE_SOURCE_DIR}/src)
 

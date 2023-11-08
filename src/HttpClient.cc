@@ -1,4 +1,4 @@
-#include "httpclient.h"
+#include "HttpClient.h"
 #include <QNetworkReply>
 #include <iostream>
 
