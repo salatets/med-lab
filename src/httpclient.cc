@@ -34,4 +34,5 @@ void HttpClient::replyFinished(QNetworkReply *reply)
                 processResponce(reply->readAll());
         }
     }
+    reply->deleteLater();
 }

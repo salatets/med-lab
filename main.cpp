@@ -20,6 +20,7 @@ int main(int argc, char *argv[])
 
     //third
     QQmlApplicationEngine engine;
+    QObject::connect(&engine, &QQmlApplicationEngine::quit, &app, &QGuiApplication::quit);
     engine.loadFromModule("main", "Main");
     return app.exec();
 }
