@@ -32,12 +32,10 @@ jobs:
       - name: Remove all trash
         run: |
           new-item -path "deploy" -type directory
-          new-item -path "deploy\components" -type directory
-          move-item -path build\components\componentsplugin.dll,build\components\qmldir -destination deploy\components
-          move-item -path build\components.dll,build\lab.exe -destination deploy
+          move-item -path build\lab.exe -destination deploy
       - name: Deploy libs
         run:  |
-          windeployqt --qmldir deploy\components --release --no-translations --no-system-d3d-compiler -no-opengl-sw deploy\lab.exe
+          windeployqt --qmldir build --release --no-translations --no-system-d3d-compiler -no-opengl-sw deploy\lab.exe
       - name: Archive Release
         uses: thedoctor0/zip-release@0.7.5
         with:
