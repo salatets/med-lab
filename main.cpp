@@ -19,7 +19,7 @@ int main(int argc, char *argv[])
     c.helloGoogle();
 
     //third
-    QQmlApplicationEngine engine(QUrl(u"qrc:/main.qml"_qs));
-    engine.addImportPath("qrc:/");
+    QQmlApplicationEngine engine;
+    engine.loadFromModule("main", "Main");
     return app.exec();
 }
